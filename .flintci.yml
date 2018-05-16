@@ -1,0 +1,3 @@
+services:
+  phpcsfixer: true
+  composernormalize: true
