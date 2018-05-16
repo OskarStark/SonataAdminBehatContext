@@ -1,8 +1,15 @@
 {
     "name": "oskarstark/sonata-admin-behat-context",
-    "description": "a Behat Context for SonataAdmin",
-    "keywords": ["BDD", "Behat", "Symfony2", "Context", "Sonata-Admin", "Sonata"],
     "type": "library",
+    "description": "a Behat Context for SonataAdmin",
+    "keywords": [
+        "BDD",
+        "Behat",
+        "Symfony2",
+        "Context",
+        "Sonata-Admin",
+        "Sonata"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -19,10 +26,10 @@
     },
     "require-dev": {
         "behat/mink-goutte-driver": "^1.1",
-        "guzzlehttp/guzzle": "^6.3",
         "behat/mink-selenium2-driver": "^1.3",
-        "phpunit/phpunit": "^6.0",
-        "friendsofphp/php-cs-fixer": "^2.11"
+        "friendsofphp/php-cs-fixer": "^2.11",
+        "guzzlehttp/guzzle": "^6.3",
+        "phpunit/phpunit": "^6.0"
     },
     "autoload": {
         "psr-4": {
