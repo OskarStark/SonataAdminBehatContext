@@ -545,8 +545,6 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
         }
     }
 
-
-
     /**
      * @When /^the "(?P<field>(?:[^"]|\\")*)" field should be empty$/
      */
