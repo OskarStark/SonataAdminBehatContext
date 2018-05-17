@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 final class SonataAdminContext extends RawMinkContext implements KernelAwareContext
 {
-    protected $defaultUserName = 'test@example.com';
+    const DEFAULT_USERNAME = 'test@example.com';
 
     /**
      * @var KernelInterface
@@ -294,8 +294,8 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
 
         $user = $userManager->create();
 
-        $user->setEmail($this->defaultUserName);
-        $user->setUsername($this->defaultUserName);
+        $user->setEmail(self::DEFAULT_USERNAME);
+        $user->setUsername(self::DEFAULT_USERNAME);
         $user->setPlainPassword('foobar');
 
         $userManager->save($user);
@@ -318,10 +318,10 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
         $driver = $this->getSession()->getDriver();
         $userManager = $this->kernel->getContainer()->get('sonata.user.user_manager');
 
-        $user = $this->kernel->getContainer()->get('sonata.user.user_manager')->findUserByUsername($this->defaultUserName);
+        $user = $this->kernel->getContainer()->get('sonata.user.user_manager')->findUserByUsername(self::DEFAULT_USERNAME);
         if (null === $user) {
             throw new ExpectationException(
-                sprintf('User with username "%s" does not exist', $this->defaultUserName),
+                sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME),
                 $driver
             );
         }
