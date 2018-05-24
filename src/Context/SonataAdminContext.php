@@ -2,6 +2,7 @@
 
 namespace OStark\Context;
 
+use Behat\Behat\Context\CustomSnippetAcceptingContext;
 use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ElementNotFoundException;
@@ -19,7 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Defines features for the SonataAdmin context.
  */
-final class SonataAdminContext extends RawMinkContext implements KernelAwareContext
+final class SonataAdminContext extends RawMinkContext implements CustomSnippetAcceptingContext, KernelAwareContext
 {
     const DEFAULT_USERNAME = 'test@example.com';
 
@@ -608,5 +609,10 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     private function fixStepArgument($argument)
     {
         return str_replace('\\"', '"', $argument);
+    }
+
+    public static function getAcceptedSnippetType()
+    {
+        return 'regex';
     }
 }
