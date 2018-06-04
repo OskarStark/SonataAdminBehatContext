@@ -275,7 +275,13 @@ EOF;
     public function iShouldSeeTheFilters()
     {
         $html = <<<EOF
-<ul class="js-filter">Foo</ul>
+<ul class="nav navbar-nav navbar-right">
+    <li class="dropdown sonata-actions">
+        <a href="#" class="dropdown-toggle sonata-ba-action" data-toggle="dropdown">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filters <b class="caret"></b>
+        </a>
+    </li>
+</ul>
 EOF;
         $mink = self::setupMink($html);
         $context = new SonataAdminContext();
@@ -286,7 +292,7 @@ EOF;
     /**
      * @test
      *
-     * @expectedExceptionMessage Filter matching xpath "//ul[contains(@class, "js-filter")]" not found.
+     * @expectedExceptionMessage Filter matching xpath "//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a" not found.
      * @expectedException \Behat\Mink\Exception\ElementNotFoundException
      */
     public function iShouldSeeTheFiltersNotFound()
@@ -308,7 +314,13 @@ EOF;
     public function iShouldNotSeeTheFiltersElementFound()
     {
         $html = <<<EOF
-<ul class="js-filter">Foo</ul>
+<ul class="nav navbar-nav navbar-right">
+    <li class="dropdown sonata-actions">
+        <a href="#" class="dropdown-toggle sonata-ba-action" data-toggle="dropdown">
+            <i class="fa fa-filter" aria-hidden="true"></i> Filters <b class="caret"></b>
+        </a>
+    </li>
+</ul>
 EOF;
         $mink = self::setupMink($html);
         $context = new SonataAdminContext();

@@ -73,7 +73,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     public function iShouldSeeTheFilters()
     {
         $session = $this->getSession();
-        $locator = '//ul[contains(@class, "js-filter")]';
+        $locator = '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a';
         $filter = $session->getPage()->find('xpath', $locator);
 
         if (!$filter) {
@@ -89,7 +89,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     public function iShouldNotSeeTheFilters()
     {
         $session = $this->getSession();
-        $filter = $session->getPage()->find('xpath', '//ul[contains(@class, "js-filter")]');
+        $filter = $session->getPage()->find('xpath', '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a');
 
         if ($filter) {
             throw new ExpectationException('Filter found!', $this->getSession()->getDriver());
@@ -106,7 +106,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     public function iClickFilters()
     {
         $session = $this->getSession();
-        $locator = '//ul[contains(@class, "js-filter")]/li/a';
+        $locator = '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a';
         $filter = $session->getPage()->find('xpath', $locator);
 
         if (!$filter) {
@@ -128,7 +128,10 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     public function iSelectElementFilter($element)
     {
         $session = $this->getSession();
-        $locator = sprintf('//ul[contains(@class, "js-filter")]/li/ul/li/a[contains(., "%s")]', $element);
+        $locator = sprintf(
+            '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a/parent::li/ul/li/a[contains(., "%s")]',
+            $element
+        );
 
         $element = $session->getPage()->find(
             'xpath',
