@@ -22,7 +22,7 @@
         "behat/behat": "^3.0",
         "behat/mink-extension": "^2.3",
         "behat/symfony2-extension": "^2.1",
-        "sonata-project/admin-bundle": "^3.0"
+        "sonata-project/user-bundle": "^3.0"
     },
     "require-dev": {
         "behat/mink-goutte-driver": "^1.1",
