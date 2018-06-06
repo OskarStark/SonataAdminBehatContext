@@ -10,6 +10,7 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
+use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -25,13 +26,27 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     const DEFAULT_USERNAME = 'test@example.com';
 
     /**
-     * @var KernelInterface
+     * @var UserManagerInterface
      */
-    protected $kernel;
+    protected $userManager;
 
     /**
-     * @param KernelInterface $kernel
+     * @var TokenStorageInterface
      */
+    protected $tokenStorage;
+
+    /**
+     * @var Session
+     */
+    protected $session;
+
+    public function __construct(UserManagerInterface $userManager, TokenStorageInterface $tokenStorage, Session $session)
+    {
+        $this->userManager = $userManager;
+        $this->tokenStorage = $tokenStorage;
+        $this->session = $session;
+    }
+
     public function setKernel(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
@@ -279,9 +294,8 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function deleteLastCreatedUser()
     {
-        $userManager = $this->kernel->getContainer()->get('sonata.user.user_manager');
-        $user = $userManager->findBy([], ['createdAt' => 'DESC'], 1);
-        $userManager->delete(current($user));
+        $user = $this->userManager->findBy([], ['createdAt' => 'DESC'], 1);
+        $this->userManager->delete(current($user));
     }
 
     /**
@@ -294,15 +308,13 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iAmAnAuthenticatedUser()
     {
-        $userManager = $this->kernel->getContainer()->get('sonata.user.user_manager');
-
-        $user = $userManager->create();
+        $user = $this->userManager->create();
 
         $user->setEmail(self::DEFAULT_USERNAME);
         $user->setUsername(self::DEFAULT_USERNAME);
         $user->setPlainPassword('foobar');
 
-        $userManager->save($user);
+        $this->userManager->save($user);
 
         $this->createUserSession($user);
     }
@@ -320,9 +332,8 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     public function iHaveRole($role)
     {
         $driver = $this->getSession()->getDriver();
-        $userManager = $this->kernel->getContainer()->get('sonata.user.user_manager');
 
-        $user = $this->kernel->getContainer()->get('sonata.user.user_manager')->findUserByUsername(self::DEFAULT_USERNAME);
+        $user = $this->userManager->findUserByUsername(self::DEFAULT_USERNAME);
         if (null === $user) {
             throw new ExpectationException(
                 sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME),
@@ -331,7 +342,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         }
 
         $user->setRoles([$role]);
-        $userManager->save($user);
+        $this->userManager->save($user);
 
         $this->createUserSession($user);
     }
@@ -350,7 +361,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $driver = $this->getSession()->getDriver();
 
-        $user = $this->kernel->getContainer()->get('sonata.user.user_manager')->findUserByUsername($username);
+        $user = $this->userManager->findUserByUsername($username);
         if (null === $user) {
             throw new ExpectationException(
                 sprintf('User with username "%s" does not exist', $username),
@@ -358,29 +369,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
             );
         }
 
-        $providerKey = $this->kernel->getContainer()->getParameter('fos_user.firewall_name');
-
-        /** @var TokenStorageInterface $context */
-        $context = $this->kernel->getContainer()->get('security.token_storage');
-        $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
-        $context->setToken($token);
-
-        /** @var Session $session */
-        $session = $this->kernel->getContainer()->get('session');
-        $session->set('_security_'.$providerKey, serialize($token));
-        $session->save();
-
-        if ($driver instanceof BrowserKitDriver) {
-            $client = $driver->getClient();
-            $cookie = new Cookie($session->getName(), $session->getId());
-            $client->getCookieJar()->set($cookie);
-        } elseif ($driver instanceof Selenium2Driver) {
-            $this->visitPath('/'); // this step is needed, otherwise the user is not logged in the first time!
-        } else {
-            throw new UnsupportedDriverActionException('The Driver is not supported!', $driver);
-        }
-
-        $this->getSession()->setCookie($session->getName(), $session->getId());
+        $this->createUserSession($user);
     }
 
     /**
@@ -578,20 +567,16 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $providerKey = $this->kernel->getContainer()->getParameter('fos_user.firewall_name');
 
-        /** @var TokenStorageInterface $context */
-        $context = $this->kernel->getContainer()->get('security.token_storage');
         $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
-        $context->setToken($token);
+        $this->tokenStorage->setToken($token);
 
-        /** @var Session $session */
-        $session = $this->kernel->getContainer()->get('session');
-        $session->set('_security_'.$providerKey, serialize($token));
-        $session->save();
+        $this->session->set('_security_'.$providerKey, serialize($token));
+        $this->session->save();
 
         $driver = $this->getSession()->getDriver();
         if ($driver instanceof BrowserKitDriver) {
             $client = $driver->getClient();
-            $cookie = new Cookie($session->getName(), $session->getId());
+            $cookie = new Cookie($this->session->getName(), $this->session->getId());
             $client->getCookieJar()->set($cookie);
         } elseif ($driver instanceof Selenium2Driver) {
             $this->visitPath('/'); // this step is needed, otherwise the user is not logged in the first time!
@@ -599,7 +584,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
             throw new UnsupportedDriverActionException('The Driver is not supported!', $driver);
         }
 
-        $this->getSession()->setCookie($session->getName(), $session->getId());
+        $this->getSession()->setCookie($this->session->getName(), $this->session->getId());
     }
 
     /**

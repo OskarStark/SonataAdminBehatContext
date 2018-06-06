@@ -16,7 +16,10 @@ default:
     suites:
         default:
             contexts:
-                - OStark\Context\SonataAdminContext
+                - OStark\Context\SonataAdminContext:
+                    userManager: '@sonata.user.user_manager'
+                    tokenStorage: '@security.token_storage'
+                    session: '@session'
 ```
 
 ## Available steps
