@@ -4,9 +4,26 @@ namespace Tests\OStark\Context;
 
 use OStark\Context\SonataAdminContext;
 use OStark\Test\BaseTestCase;
+use Sonata\UserBundle\Model\UserManagerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SonataAdminContextTest extends BaseTestCase
 {
+    /**
+     * @var SonataAdminContext
+     */
+    private $context;
+
+    protected function setUp()
+    {
+        $this->context = new SonataAdminContext(
+            $this->createMock(UserManagerInterface::class),
+            $this->createMock(TokenStorageInterface::class),
+            $this->createMock(Session::class)
+        );
+    }
+
     /**
      * @test
      */
@@ -18,9 +35,8 @@ EOF;
 
         $mink = self::setupMink($html);
 
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iResetTheFilters());
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iResetTheFilters());
     }
 
     /**
@@ -37,9 +53,8 @@ EOF;
 
         $mink = self::setupMink($html);
 
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iResetTheFilters();
+        $this->context->setMink($mink);
+        $this->context->iResetTheFilters();
     }
 
     /**
@@ -58,9 +73,8 @@ EOF;
 
         $mink = self::setupMink($html);
 
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeFlashMessageWith('success', 'Foo');
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeFlashMessageWith('success', 'Foo');
     }
 
     /**
@@ -79,9 +93,8 @@ EOF;
 
         $mink = self::setupMink($html);
 
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeFlashMessageWith('success', 'Foo');
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeFlashMessageWith('success', 'Foo');
     }
 
     /**
@@ -93,9 +106,8 @@ EOF;
     {
         $mink = self::setupMink($html);
 
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldSeeFlashMessageWith($status, $message));
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeFlashMessageWith($status, $message));
     }
 
     /**
@@ -144,9 +156,9 @@ EOF
     public function iShouldSeeListColumn($html, $name)
     {
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldSeeListColumn($name));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeListColumn($name));
     }
 
     public function iShouldSeeListColumnProvider()
@@ -208,9 +220,9 @@ EOF
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeListColumn('Test2');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeListColumn('Test2');
     }
 
     /**
@@ -228,9 +240,9 @@ EOF;
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldNotSeeListColumn('Foo'));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldNotSeeListColumn('Foo'));
     }
 
     /**
@@ -250,9 +262,9 @@ EOF;
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldNotSeeListColumn('Foo');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldNotSeeListColumn('Foo');
     }
 
     /**
@@ -264,9 +276,9 @@ EOF;
 <ul>Foo</ul>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldNotSeeTheFilters());
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldNotSeeTheFilters());
     }
 
     /**
@@ -284,9 +296,9 @@ EOF;
 </ul>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldSeeTheFilters());
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeTheFilters());
     }
 
     /**
@@ -301,9 +313,9 @@ EOF;
 <ul>Foo</ul>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeTheFilters();
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeTheFilters();
     }
 
     /**
@@ -323,9 +335,9 @@ EOF;
 </ul>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldNotSeeTheFilters();
+
+        $this->context->setMink($mink);
+        $this->context->iShouldNotSeeTheFilters();
     }
 
     /**
@@ -342,9 +354,9 @@ EOF;
 </div>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeFilter('Foo Bar');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeFilter('Foo Bar');
     }
 
     /**
@@ -354,9 +366,9 @@ EOF;
     public function iShouldSeeFilter($html, $name)
     {
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldSeeFilter($name));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeFilter($name));
     }
 
     public function iShouldSeeFilterProvider()
@@ -401,9 +413,9 @@ EOF
 <div></div>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldNotSeeListColumns('Foo Bar');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldNotSeeListColumns('Foo Bar');
     }
 
     /**
@@ -421,9 +433,9 @@ EOF;
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldNotSeeListColumns('Bar, Foo'));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldNotSeeListColumns('Bar, Foo'));
     }
 
     /**
@@ -438,9 +450,9 @@ EOF;
 <div></div>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeListColumns('Foo Bar');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeListColumns('Foo Bar');
     }
 
     /**
@@ -451,9 +463,9 @@ EOF;
     public function iShouldSeeListColumns($html, $name)
     {
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldSeeListColumns($name));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeListColumns($name));
     }
 
     public function iShouldSeeListColumnsProvider()
@@ -510,9 +522,9 @@ EOF
 <form><input type="text" name="fooBar" value=""></form>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->assertFieldEmpty('fooBar'));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->assertFieldEmpty('fooBar'));
     }
 
     /**
@@ -526,9 +538,9 @@ EOF;
         <form><input type="text" name="fooBar" value="Foo Bar"></form>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->assertFieldEmpty('fooBar');
+
+        $this->context->setMink($mink);
+        $this->context->assertFieldEmpty('fooBar');
     }
 
     /**
@@ -540,9 +552,9 @@ EOF;
 <form><input type="text" name="blaa" value="test value blaaaa"></form>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->assertFieldNotEmpty('blaa'));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->assertFieldNotEmpty('blaa'));
     }
 
     /**
@@ -556,9 +568,9 @@ EOF;
         <form><input type="text" name="blaa" value=""></form>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->assertFieldNotEmpty('blaa');
+
+        $this->context->setMink($mink);
+        $this->context->assertFieldNotEmpty('blaa');
     }
 
     /**
@@ -575,9 +587,9 @@ EOF;
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $this->assertNull($context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar'));
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar'));
     }
 
     /**
@@ -596,9 +608,9 @@ EOF;
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar');
     }
 
     /**
@@ -617,8 +629,8 @@ EOF;
 </table>
 EOF;
         $mink = self::setupMink($html);
-        $context = new SonataAdminContext();
-        $context->setMink($mink);
-        $context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar');
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar');
     }
 }
