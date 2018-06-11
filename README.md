@@ -5,7 +5,7 @@
 ## Installation
 
 ```console
-composer require oskarstark/sonata-admin-behat-context
+composer require oskarstark/sonata-admin-behat-context --dev
 ```
 
 ## Usage
