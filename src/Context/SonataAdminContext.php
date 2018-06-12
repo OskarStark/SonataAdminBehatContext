@@ -333,7 +333,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $driver = $this->getSession()->getDriver();
 
-        $user = $this->userManager->findUserByUsername(self::DEFAULT_USERNAME);
+        $user = $this->userManager->findOneBy(['username' => self::DEFAULT_USERNAME]);
         if (null === $user) {
             throw new ExpectationException(
                 sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME),
@@ -361,7 +361,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $driver = $this->getSession()->getDriver();
 
-        $user = $this->userManager->findUserByUsername($username);
+        $user = $this->userManager->findOneBy(['username' => self::DEFAULT_USERNAME]);
         if (null === $user) {
             throw new ExpectationException(
                 sprintf('User with username "%s" does not exist', $username),
@@ -569,6 +569,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
         $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
         $this->tokenStorage->setToken($token);
+
+        $authenticated = $this->tokenStorage->getToken()->isAuthenticated();
+        if (!$authenticated) {
+            throw new \RuntimeException('Not authenticated!');
+        }
 
         $this->session->set('_security_'.$providerKey, serialize($token));
         $this->session->save();
