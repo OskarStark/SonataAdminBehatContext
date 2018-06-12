@@ -570,6 +570,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
         $this->tokenStorage->setToken($token);
 
+        $authenticated = $this->tokenStorage->getToken()->isAuthenticated();
+        if (!$authenticated) {
+            throw new \RuntimeException('Not authenticated!');
+        }
+
         $this->session->set('_security_'.$providerKey, serialize($token));
         $this->session->save();
 
