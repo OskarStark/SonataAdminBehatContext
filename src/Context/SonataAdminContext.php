@@ -26,6 +26,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     const DEFAULT_USERNAME = 'test@example.com';
 
     /**
+     * @var UserInterface
+     */
+    private $user;
+
+    /**
      * @var UserManagerInterface
      */
     protected $userManager;
@@ -316,6 +321,8 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
         $this->userManager->save($user);
 
+        $this->user = $user;
+
         $this->createUserSession($user);
     }
 
@@ -331,18 +338,12 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iHaveRole($role)
     {
-        $driver = $this->getSession()->getDriver();
-
-        $user = $this->userManager->findOneBy(['username' => self::DEFAULT_USERNAME]);
-        if (null === $user) {
-            throw new ExpectationException(
-                sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME),
-                $driver
-            );
-        }
+        $user = $this->getCurrentUser();
 
         $user->setRoles([$role]);
         $this->userManager->save($user);
+
+        $this->user = $user;
 
         $this->createUserSession($user);
     }
@@ -361,13 +362,15 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $driver = $this->getSession()->getDriver();
 
-        $user = $this->userManager->findOneBy(['username' => self::DEFAULT_USERNAME]);
+        $user = $this->userManager->findOneBy(['username' => $username]);
         if (null === $user) {
             throw new ExpectationException(
                 sprintf('User with username "%s" does not exist', $username),
                 $driver
             );
         }
+
+        $this->user = $user;
 
         $this->createUserSession($user);
     }
@@ -590,6 +593,23 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         }
 
         $this->getSession()->setCookie($this->session->getName(), $this->session->getId());
+    }
+
+    private function getCurrentUser()
+    {
+        if (null != $this->user) {
+            return $this->user;
+        }
+
+        $user = $this->userManager->findOneBy(['username' => self::DEFAULT_USERNAME]);
+        if (null === $user) {
+            throw new ExpectationException(
+                sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME),
+                $this->getSession()->getDriver()
+            );
+        }
+
+        return $user;
     }
 
     /**
