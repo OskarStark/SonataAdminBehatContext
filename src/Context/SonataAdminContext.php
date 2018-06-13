@@ -45,6 +45,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     protected $session;
 
+    /**
+     * @var KernelInterface
+     */
+    protected $kernel;
+
     public function __construct(UserManagerInterface $userManager, TokenStorageInterface $tokenStorage, Session $session)
     {
         $this->userManager = $userManager;
@@ -300,7 +305,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     public function deleteLastCreatedUser()
     {
         $user = $this->userManager->findBy([], ['createdAt' => 'DESC'], 1);
-        $this->userManager->delete(current($user));
+        $this->userManager->deleteUser(current($user));
     }
 
     /**
@@ -313,13 +318,13 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iAmAnAuthenticatedUser()
     {
-        $user = $this->userManager->create();
+        $user = $this->userManager->createUser();
 
         $user->setEmail(self::DEFAULT_USERNAME);
         $user->setUsername(self::DEFAULT_USERNAME);
         $user->setPlainPassword('foobar');
 
-        $this->userManager->save($user);
+        $this->userManager->updateUser($user);
 
         $this->user = $user;
 
@@ -341,7 +346,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         $user = $this->getCurrentUser();
 
         $user->setRoles([$role]);
-        $this->userManager->save($user);
+        $this->userManager->updateUser($user);
 
         $this->user = $user;
 
@@ -595,7 +600,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         $this->getSession()->setCookie($this->session->getName(), $this->session->getId());
     }
 
-    private function getCurrentUser()
+    private function getCurrentUser(): UserInterface
     {
         if (null != $this->user) {
             return $this->user;
