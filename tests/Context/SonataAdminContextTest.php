@@ -516,7 +516,7 @@ EOF
     /**
      * @test
      */
-    public function assertFieldEmpty()
+    public function theFieldShouldBeEmtpy()
     {
         $html = <<<EOF
 <form><input type="text" name="fooBar" value=""></form>
@@ -524,7 +524,7 @@ EOF;
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->assertNull($this->context->assertFieldEmpty('fooBar'));
+        $this->assertNull($this->context->theFieldShouldBeEmtpy('fooBar'));
     }
 
     /**
@@ -532,7 +532,7 @@ EOF;
      * @expectedException \Behat\Mink\Exception\ExpectationException
      * @expectedExceptionMessage The field "fooBar" value is "Foo Bar", but "" expected.
      */
-    public function assertFieldEmptyButItsNot()
+    public function theFieldShouldBeEmtpyButItsNot()
     {
         $html = <<<EOF
         <form><input type="text" name="fooBar" value="Foo Bar"></form>
@@ -540,13 +540,13 @@ EOF;
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->context->assertFieldEmpty('fooBar');
+        $this->context->theFieldShouldBeEmtpy('fooBar');
     }
 
     /**
      * @test
      */
-    public function assertFieldNotEmpty()
+    public function theFieldShouldNotBeEmtpy()
     {
         $html = <<<EOF
 <form><input type="text" name="blaa" value="test value blaaaa"></form>
@@ -554,7 +554,7 @@ EOF;
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->assertNull($this->context->assertFieldNotEmpty('blaa'));
+        $this->assertNull($this->context->theFieldShouldNotBeEmtpy('blaa'));
     }
 
     /**
@@ -562,7 +562,7 @@ EOF;
      * @expectedException \Behat\Mink\Exception\ExpectationException
      * @expectedExceptionMessage The field "blaa" value is "", but it should not be.
      */
-    public function assertFieldNotEmptyButItIs()
+    public function theFieldShouldNotBeEmtpyButItIs()
     {
         $html = <<<EOF
         <form><input type="text" name="blaa" value=""></form>
@@ -570,7 +570,7 @@ EOF;
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->context->assertFieldNotEmpty('blaa');
+        $this->context->theFieldShouldNotBeEmtpy('blaa');
     }
 
     /**

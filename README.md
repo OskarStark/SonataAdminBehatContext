@@ -82,4 +82,6 @@ default:
 | Step | Regex |
 | --- | --- |
 | the field "**Firstname**" should be empty | `/^the "(?P<field>(?:[^"]\|\\")*)" field should be empty$/` |
+| the "**Firstname**" field should be empty | `/^the field "(?P<field>(?:[^"]\|\\")*)" should be empty$/` |
 | the field "**Password**" should not be empty | `/^the "(?P<field>(?:[^"]\|\\")*)" field should not be empty$/` |
+| the "**Password**" field should not be empty | `/^the field "(?P<field>(?:[^"]\|\\")*)" should not be empty$/` |

@@ -547,9 +547,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     }
 
     /**
-     * @When /^the "(?P<field>(?:[^"]|\\")*)" field should be empty$/
+     * @When /^the "(?P<field>(?:[^"]|\\")*)" field should be emtpy$/
+     * @When /^the field "(?P<field>(?:[^"]|\\")*)" should be emtpy$/
      */
-    public function assertFieldEmpty($field)
+    public function theFieldShouldBeEmtpy($field)
     {
         $field = $this->fixStepArgument($field);
         $this->assertSession()->fieldValueEquals($field, '');
@@ -557,8 +558,9 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
     /**
      * @When /^the "(?P<field>(?:[^"]|\\")*)" field should not be empty$/
+     * @When /^the field "(?P<field>(?:[^"]|\\")*)" should not be empty$/
      */
-    public function assertFieldNotEmpty($field)
+    public function theFieldShouldNotBeEmtpy($field)
     {
         $field = $this->fixStepArgument($field);
         $this->assertSession()->fieldValueNotEquals($field, '');
