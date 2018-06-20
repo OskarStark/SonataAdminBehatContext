@@ -3,11 +3,13 @@
 namespace OStark\Context;
 
 use Behat\Behat\Context\CustomSnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Behat\MinkExtension\Context\MinkContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Sonata\UserBundle\Model\UserManagerInterface;
@@ -50,6 +52,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     protected $kernel;
 
+    /**
+     * @var MinkContext
+     */
+    private $minkContext;
+
     public function __construct(UserManagerInterface $userManager, TokenStorageInterface $tokenStorage, Session $session)
     {
         $this->userManager = $userManager;
@@ -60,6 +67,16 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     public function setKernel(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+
+        $this->minkContext = $environment->getContext(MinkContext::class);
     }
 
     /**
@@ -181,7 +198,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     public function iShouldSeeFilter($name)
     {
         $session = $this->getSession();
-        $name = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
+        if (strstr($name, ' ')) {
+            $name = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
+        } else {
+            $name = mb_strtolower($name);
+        }
         $locator = sprintf('//div[contains(@class, "form-group")]//input[contains(@name, "filter[%s][value]")]', $name);
 
         $element = $session->getPage()->find(
@@ -192,6 +213,27 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         if (!$element) {
             throw new ElementNotFoundException($this->getSession()->getDriver(), 'Filter', 'xpath', $locator);
         }
+    }
+
+    /**
+     * @When /^(?:|I ) filter "([^"]*)" with "([^"]*)"$/
+     *
+     * @param string $name
+     * @param string $value
+     *
+     * @throws ElementNotFoundException
+     *
+     * @codeCoverageIgnore
+     */
+    public function iFilterWith($name, $value)
+    {
+        $this->iShouldSeeTheFilters();
+        $this->iClickFilters();
+        $this->iSelectElementFilter($name);
+        $this->iShouldSeeFilter($name); # ???
+        $this->iClickFilters();
+        $this->minkContext->fillField($name, $value);
+        $this->iFilterTheList();
     }
 
     /**
