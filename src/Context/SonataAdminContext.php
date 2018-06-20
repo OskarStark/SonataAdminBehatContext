@@ -230,7 +230,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         $this->iShouldSeeTheFilters();
         $this->iClickFilters();
         $this->iSelectElementFilter($name);
-        $this->iShouldSeeFilter($name); # ???
+        $this->iShouldSeeFilter($name); // ???
         $this->iClickFilters();
         $this->minkContext->fillField($name, $value);
         $this->iFilterTheList();
