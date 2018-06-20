@@ -38,7 +38,7 @@ default:
 | I click filters | `/^(?:\|I )click filters$/` |
 | I select "**Email**" filter | `/^(?:\|I )select "([^"]*)" filter$/` |
 | I should see "**Firstname**" filter | `/^(?:\|I )should see "([^"]*)" filter$/` |
-| I filter "**ID**" with "**1**" | `/^(?:\|I ) filter "([^"]*)" with "([^"]*)"$/` |
+| I filter "**ID**" with "**1**" | `/^(?:\|I )filter "([^"]*)" with "([^"]*)"$/` |
 
 ### Checkboxes
 
