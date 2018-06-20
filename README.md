@@ -20,6 +20,9 @@ default:
                     userManager: '@sonata.user.user_manager'
                     tokenStorage: '@security.token_storage'
                     session: '@session'
+
+                # make sure to enable MinkContext!
+                - Behat\MinkExtension\Context\MinkContext
 ```
 
 ## Available steps
@@ -35,6 +38,7 @@ default:
 | I click filters | `/^(?:\|I )click filters$/` |
 | I select "**Email**" filter | `/^(?:\|I )select "([^"]*)" filter$/` |
 | I should see "**Firstname**" filter | `/^(?:\|I )should see "([^"]*)" filter$/` |
+| I filter "**ID**" with "**1**" | `/^(?:\|I ) filter "([^"]*)" with "([^"]*)"$/` |
 
 ### Checkboxes
 
