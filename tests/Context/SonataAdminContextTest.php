@@ -205,7 +205,7 @@ EOF
 
     /**
      * @test
-     * @expectedExceptionMessage Column-Switcher matching xpath "//table/thead//th[contains(., "Test2")]" not found.
+     * @expectedExceptionMessage Column matching xpath "//table/thead//th[contains(., "Test2")]" not found.
      * @expectedException \Behat\Mink\Exception\ElementNotFoundException
      */
     public function iShouldSeeListColumnElementNotFound()
