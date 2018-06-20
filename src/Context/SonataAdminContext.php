@@ -490,7 +490,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         );
 
         if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Column-Switcher', 'xpath', $locator);
+            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Column', 'xpath', $locator);
         }
     }
 
