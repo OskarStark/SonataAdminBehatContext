@@ -216,7 +216,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     }
 
     /**
-     * @When /^(?:|I ) filter "([^"]*)" with "([^"]*)"$/
+     * @When /^(?:|I )filter "([^"]*)" with "([^"]*)"$/
      *
      * @param string $name
      * @param string $value
