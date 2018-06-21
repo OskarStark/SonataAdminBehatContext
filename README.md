@@ -37,9 +37,9 @@ default:
 | I should not see the filters | `/^(?:\|I )should not see the filters$/` |
 | I click filters | `/^(?:\|I )click filters$/` |
 | I select "**Email**" filter | `/^(?:\|I )select "([^"]*)" filter$/` |
+| I select filters:<br>\|**ID**   \|<br>\|**Name**\| | /^(?:\|I )select filters:$/ |
 | I should see "**Firstname**" filter | `/^(?:\|I )should see "([^"]*)" filter$/` |
 | I should see filters:<br>\|**ID**   \|<br>\|**Name**\| | /^(?:\|I )should see filters:$/ |
-| I select filters:<br>\|**ID**   \|<br>\|**Name**\| | /^(?:\|I )select filters:$/ |
 | I filter "**ID**" with "**1**" | `/^(?:\|I )filter "([^"]*)" with "([^"]*)"$/` |
 
 ### Checkboxes
