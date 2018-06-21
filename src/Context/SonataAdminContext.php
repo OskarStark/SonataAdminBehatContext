@@ -199,7 +199,16 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $session = $this->getSession();
         if (strstr($name, ' ')) {
-            $name = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
+            $parts = explode(' ', $name);
+
+            $name = '';
+            foreach ($parts as $key => $part) {
+                if (0 == $key) {
+                    $name .= mb_strtolower($part);
+                } else {
+                    $name .= ucfirst(mb_strtolower($part));
+                }
+            }
         } else {
             $name = mb_strtolower($name);
         }
