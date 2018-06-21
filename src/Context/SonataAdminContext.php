@@ -541,6 +541,23 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     }
 
     /**
+     * Example: Then I should see list columns:
+     *              | ID   |
+     *              | Name |
+     * Example: And I should see list columns:
+     *              | ID   |
+     *              | Name |.
+     *
+     * @When /^(?:|I )should see list columns:$/
+     */
+    public function iShouldSeeListColumnsTable(TableNode $columns)
+    {
+        foreach ($columns->getRowsHash() as $column => $value) {
+            $this->iShouldSeeListColumn($column);
+        }
+    }
+
+    /**
      * @When /^(?:|I )should not see "([^"]*)" list columns$/
      *
      * @param string $columns
@@ -555,6 +572,23 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
         foreach (explode(',', $columns) as $column) {
             $this->iShouldNotSeeListColumn(trim($column));
+        }
+    }
+
+    /**
+     * Example: Then I should not see list columns:
+     *              | ID   |
+     *              | Name |
+     * Example: And I should not see list columns:
+     *              | ID   |
+     *              | Name |.
+     *
+     * @When /^(?:|I )should not see list columns:$/
+     */
+    public function iShouldNotSeeListColumnsTable(TableNode $columns)
+    {
+        foreach ($columns->getRowsHash() as $column => $value) {
+            $this->iShouldNotSeeListColumn($column);
         }
     }
 

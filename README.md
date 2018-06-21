@@ -78,7 +78,9 @@ default:
 | Step | Regex |
 | --- | --- |
 | I should see "**ID, Firstname, Lastname**" list columns | `/^(?:\|I )should see "([^"]*)" list columns$/` |
+| I should see list columns:<br>\|**ID**\|<br>\|**Firstname**\|<br>\|**Lastname**\| | /^(?:\|I )should see list columns:$/ |
 | I should not see "**Email, Password**" list columns | `/^(?:\|I )should not see "([^"]*)" list columns$/` |
+| I should not see list columns:<br>\|**ID**\|<br>\|**Firstname**\|<br>\|**Lastname**\| | /^(?:\|I )should not see list columns:$/ |
 | I should see "**ID**" list column |`/^(?:\|I )should see "([^"]*)" list column$/`|
 | I should not see "**Password**" list column |`/^(?:\|I )should not see "([^"]*)" list column$/`|
 | I should see "**user@example.com**" in row "**1**" on column "**Email**"| `/^(?:\|I )should see "([^"]*)" in row "([^"]*)" on column "([^"]*)"$/` |
