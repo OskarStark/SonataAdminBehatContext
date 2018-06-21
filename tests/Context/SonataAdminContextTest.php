@@ -406,6 +406,14 @@ EOF
 EOF
                 , 'Foo Bar',
             ],
+            [
+                <<<EOF
+<div class="form-group">
+    <input name="filter[fooBarBaz][value]">
+</div>
+EOF
+                , 'FOO Bar Baz',
+            ],
         ];
     }
 
