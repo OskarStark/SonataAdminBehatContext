@@ -39,7 +39,7 @@ default:
 | I select "**Email**" filter | `/^(?:\|I )select "([^"]*)" filter$/` |
 | I should see "**Firstname**" filter | `/^(?:\|I )should see "([^"]*)" filter$/` |
 | I should see filters:<br>\|**ID**   \|<br>\|**Name**\| | /^(?:\|I )should see filters:$/ |
-| I select:<br>\|**ID**   \|<br>\|**Name**\| | /^(?:\|I )select filters:$/ |
+| I select filters:<br>\|**ID**   \|<br>\|**Name**\| | /^(?:\|I )select filters:$/ |
 | I filter "**ID**" with "**1**" | `/^(?:\|I )filter "([^"]*)" with "([^"]*)"$/` |
 
 ### Checkboxes
