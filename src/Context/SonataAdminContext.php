@@ -4,6 +4,7 @@ namespace OStark\Context;
 
 use Behat\Behat\Context\CustomSnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ElementNotFoundException;
@@ -162,18 +163,18 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     /**
      * @When /^(?:|I )select "([^"]*)" filter$/
      *
-     * @param string $element
+     * @param string $name
      *
      * @throws ElementNotFoundException
      *
      * @codeCoverageIgnore Selenium2Driver needed
      */
-    public function iSelectElementFilter($element)
+    public function iSelectFilter($name)
     {
         $session = $this->getSession();
         $locator = sprintf(
             '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a/parent::li/ul/li/a[contains(., "%s")]',
-            $element
+            $name
         );
 
         $element = $session->getPage()->find(
@@ -186,6 +187,23 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         }
 
         $element->click();
+    }
+
+    /**
+     * Example: Then I select filters:
+     *              | ID   |
+     *              | Name |
+     * Example: And I select filters:
+     *              | ID   |
+     *              | Name |.
+     *
+     * @When /^(?:|I )select filters:$/
+     */
+    public function iSelectFilters(TableNode $names)
+    {
+        foreach ($names->getRowsHash() as $name => $value) {
+            $this->iSelectFilter($name);
+        }
     }
 
     /**
@@ -225,6 +243,23 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     }
 
     /**
+     * Example: Then I should see filters:
+     *              | ID   |
+     *              | Name |
+     * Example: And I should see filters:
+     *              | ID   |
+     *              | Name |.
+     *
+     * @When /^(?:|I )should see filters:$/
+     */
+    public function iShouldSeeFilters(TableNode $names)
+    {
+        foreach ($names->getRowsHash() as $name => $value) {
+            $this->iShouldSeeFilter($name);
+        }
+    }
+
+    /**
      * @When /^(?:|I )filter "([^"]*)" with "([^"]*)"$/
      *
      * @param string $name
@@ -238,7 +273,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $this->iShouldSeeTheFilters();
         $this->iClickFilters();
-        $this->iSelectElementFilter($name);
+        $this->iSelectFilter($name);
         $this->iShouldSeeFilter($name);
         $this->iClickFilters();
         $this->minkContext->fillField($name, $value);
