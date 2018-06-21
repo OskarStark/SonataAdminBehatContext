@@ -204,11 +204,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
             $name = '';
             foreach ($parts as $key => $part) {
                 if (0 == $key) {
-                    $name.= mb_strtolower($part);
+                    $name .= mb_strtolower($part);
                 } else {
-                    $name.= ucfirst(mb_strtolower($part));
+                    $name .= ucfirst(mb_strtolower($part));
                 }
-
             }
         } else {
             $name = mb_strtolower($name);
