@@ -343,7 +343,7 @@ EOF;
     /**
      * @test
      *
-     * @expectedExceptionMessage Filter matching xpath "//div[contains(@class, "form-group")]//input[contains(@name, "filter[fooBar][value]")]" not found.
+     * @expectedExceptionMessage Filter matching xpath "//div[contains(@class, "form-group")]//*[self::input or self::select][contains(@name, "filter[fooBar][value]")]" not found.
      * @expectedException \Behat\Mink\Exception\ElementNotFoundException
      */
     public function iShouldSeeFilterNotFound()
@@ -413,6 +413,14 @@ EOF
 </div>
 EOF
                 , 'FOO Bar Baz',
+            ],
+            [
+                <<<EOF
+<div class="form-group">
+    <select name="filter[bar][value]">
+</div>
+EOF
+                , 'Bar',
             ],
         ];
     }

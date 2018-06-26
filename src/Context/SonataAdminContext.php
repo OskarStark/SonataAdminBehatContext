@@ -230,7 +230,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         } else {
             $name = mb_strtolower($name);
         }
-        $locator = sprintf('//div[contains(@class, "form-group")]//input[contains(@name, "filter[%s][value]")]', $name);
+        $locator = sprintf('//div[contains(@class, "form-group")]//*[self::input or self::select][contains(@name, "filter[%s][value]")]', $name);
 
         $element = $session->getPage()->find(
             'xpath',
