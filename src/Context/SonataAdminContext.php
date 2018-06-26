@@ -644,13 +644,12 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      * @param string $column
      *
      * @throws ElementNotFoundException
-     * @throws ExpectationException
      */
     public function iShouldSeeValueInRowOnColumn($value, $row, $column)
     {
         $session = $this->getSession();
         $column = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $column))));
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s"]', $row, $column);
+        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and contains(., "%s")]', $row, $column, $value);
 
         $element = $session->getPage()->find(
             'xpath',
@@ -659,10 +658,6 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
         if (!$element) {
             throw new ElementNotFoundException($this->getSession()->getDriver(), 'Value-In-Row', 'xpath', $locator);
-        }
-
-        if (!strstr($element->getHtml(), $value)) {
-            throw new ExpectationException('Could not find value!', $this->getSession()->getDriver());
         }
     }
 

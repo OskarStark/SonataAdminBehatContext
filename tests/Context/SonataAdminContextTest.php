@@ -619,35 +619,14 @@ EOF;
     /**
      * @test
      * @expectedException \Behat\Mink\Exception\ElementNotFoundException
-     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="bar"]" not found.
+     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="baz" and contains(., "tralala")]" not found.
      */
     public function iShouldSeeValueInRowOnColumnElementNotFound()
     {
         $html = <<<EOF
 <table>
-<thead>
-    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
-    <tr></tr>
-</thead>
-</table>
-EOF;
-        $mink = self::setupMink($html);
-
-        $this->context->setMink($mink);
-        $this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar');
-    }
-
-    /**
-     * @test
-     * @expectedException \Behat\Mink\Exception\ExpectationException
-     * @expectedExceptionMessage Could not find value!
-     */
-    public function iShouldSeeValueInRowOnColumnValueNotFound()
-    {
-        $html = <<<EOF
-<table>
 <tbody>
-    <tr><td data-name="bar">test foo</td><td data-name="foo"></td></tr>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
     <tr></tr>
 </tbody>
 </table>
@@ -655,6 +634,27 @@ EOF;
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar');
+        $this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'baz');
+    }
+
+    /**
+     * @test
+     * @expectedException \Behat\Mink\Exception\ElementNotFoundException
+     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="bar" and contains(., "value")]" not found.
+     */
+    public function iShouldSeeValueInRowOnColumnElementFoundButInvalidValue()
+    {
+        $html = <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF;
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeValueInRowOnColumn('value', 1, 'bar');
     }
 }
