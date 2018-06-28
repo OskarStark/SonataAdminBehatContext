@@ -599,27 +599,66 @@ EOF;
 
     /**
      * @test
+     *
+     * @dataProvider iShouldSeeValueInRowOnColumnProvider
      */
-    public function iShouldSeeValueInRowOnColumn()
+    public function iShouldSeeValueInRowOnColumn($html, $name)
     {
-        $html = <<<EOF
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeValueInRowOnColumn('tralala', 1, $name));
+    }
+
+    /**
+     * @return array
+     */
+    public function iShouldSeeValueInRowOnColumnProvider()
+    {
+        return [
+            [
+                <<<EOF
 <table>
 <tbody>
     <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
     <tr></tr>
 </tbody>
 </table>
-EOF;
-        $mink = self::setupMink($html);
-
-        $this->context->setMink($mink);
-        $this->assertNull($this->context->iShouldSeeValueInRowOnColumn('tralala', 1, 'bar'));
+EOF
+                ,
+                'Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="fooBar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'Foo Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="fooBar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'FOO Bar',
+            ],
+        ];
     }
 
     /**
      * @test
      * @expectedException \Behat\Mink\Exception\ElementNotFoundException
-     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="baz" and contains(., "tralala")]" not found.
+     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="baz" and normalize-space() = "tralala"]" not found.
      */
     public function iShouldSeeValueInRowOnColumnElementNotFound()
     {
@@ -640,7 +679,7 @@ EOF;
     /**
      * @test
      * @expectedException \Behat\Mink\Exception\ElementNotFoundException
-     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="bar" and contains(., "value")]" not found.
+     * @expectedExceptionMessage Value-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="bar" and normalize-space() = "value"]" not found.
      */
     public function iShouldSeeValueInRowOnColumnElementFoundButInvalidValue()
     {
