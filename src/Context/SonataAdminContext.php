@@ -648,8 +648,23 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     public function iShouldSeeValueInRowOnColumn($value, $row, $column)
     {
         $session = $this->getSession();
-        $column = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $column))));
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and contains(., "%s")]', $row, $column, $value);
+
+        if (strstr($column, ' ')) {
+            $parts = explode(' ', $column);
+
+            $column = '';
+            foreach ($parts as $key => $part) {
+                if (0 == $key) {
+                    $column .= mb_strtolower($part);
+                } else {
+                    $column .= ucfirst(mb_strtolower($part));
+                }
+            }
+        } else {
+            $column = mb_strtolower($column);
+        }
+
+        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, $column, $value);
 
         $element = $session->getPage()->find(
             'xpath',
