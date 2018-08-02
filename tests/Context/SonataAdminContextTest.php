@@ -696,4 +696,104 @@ EOF;
         $this->context->setMink($mink);
         $this->context->iShouldSeeValueInRowOnColumn('value', 1, 'bar');
     }
+
+    /**
+     * @test
+     *
+     * @dataProvider iShouldSeeNothingInRowOnColumnProvider
+     */
+    public function iShouldSeeNothingInRowOnColumn($html, $name)
+    {
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->iShouldSeeNothingInRowOnColumn(1, $name));
+    }
+
+    /**
+     * @return array
+     */
+    public function iShouldSeeNothingInRowOnColumnProvider()
+    {
+        return [
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar"></td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="fooBar"></td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'Foo Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="fooBar"></td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'FOO Bar',
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @expectedException \Behat\Mink\Exception\ElementNotFoundException
+     * @expectedExceptionMessage Nothing-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="baz" and normalize-space() = ""]" not found.
+     */
+    public function iShouldSeeNothingInRowOnColumnElementNotFound()
+    {
+        $html = <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF;
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeNothingInRowOnColumn(1, 'baz');
+    }
+
+    /**
+     * @test
+     * @expectedException \Behat\Mink\Exception\ElementNotFoundException
+     * @expectedExceptionMessage Nothing-In-Row matching xpath "//table/tbody/tr[1]/td[@data-name="bar" and normalize-space() = ""]" not found.
+     */
+    public function iShouldSeeNothingInRowOnColumnElementFoundButInvalidValue()
+    {
+        $html = <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF;
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->context->iShouldSeeNothingInRowOnColumn(1, 'bar');
+    }
 }

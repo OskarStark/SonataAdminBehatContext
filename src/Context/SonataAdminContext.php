@@ -637,7 +637,8 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     }
 
     /**
-     * @When /^(?:|I )should see "([^"]*)" in row "([^"]*)" on column "([^"]*)"$/
+     * @When /^(?:|I )should see "(?P<value>[^"]*)" in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/
+     * @When /^(?:|the )row "(?P<row>[^"]*)" should contain "(?P<value>[^"]*)" on column "(?P<column>[^"]*)"$/
      *
      * @param string $value
      * @param string $row
@@ -673,6 +674,48 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
         if (!$element) {
             throw new ElementNotFoundException($this->getSession()->getDriver(), 'Value-In-Row', 'xpath', $locator);
+        }
+    }
+
+    /**
+     * @When /^(?:|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/
+     * @When /^(?:|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/
+     *
+     * @param string $row
+     * @param string $column
+     *
+     * @throws ElementNotFoundException
+     */
+    public function iShouldSeeNothingInRowOnColumn($row, $column)
+    {
+        $value = '';
+
+        $session = $this->getSession();
+
+        if (strstr($column, ' ')) {
+            $parts = explode(' ', $column);
+
+            $column = '';
+            foreach ($parts as $key => $part) {
+                if (0 == $key) {
+                    $column .= mb_strtolower($part);
+                } else {
+                    $column .= ucfirst(mb_strtolower($part));
+                }
+            }
+        } else {
+            $column = mb_strtolower($column);
+        }
+
+        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, $column, $value);
+
+        $element = $session->getPage()->find(
+            'xpath',
+            $locator
+        );
+
+        if (!$element) {
+            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Nothing-In-Row', 'xpath', $locator);
         }
     }
 

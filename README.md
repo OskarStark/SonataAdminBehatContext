@@ -83,7 +83,10 @@ default:
 | I should not see list columns:<br>\|**ID**\|<br>\|**Firstname**\|<br>\|**Lastname**\| | /^(?:\|I )should not see list columns:$/ |
 | I should see "**ID**" list column |`/^(?:\|I )should see "([^"]*)" list column$/`|
 | I should not see "**Password**" list column |`/^(?:\|I )should not see "([^"]*)" list column$/`|
-| I should see "**user@example.com**" in row "**1**" on column "**Email**"| `/^(?:\|I )should see "([^"]*)" in row "([^"]*)" on column "([^"]*)"$/` |
+| I should see "**user@example.com**" in row "**1**" on column "**Email**"| `/^(?:\|I )should see "(?P<value>[^"]*)" in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/` |
+| the row "**1**" should contain "**user@example.com**" on column "**Email**"| `/^(?:\|the )row "(?P<row>[^"]*)" should contain "(?P<value>[^"]*)" on column "(?P<column>[^"]*)"$/` |
+| I should see nothing in row "**1**" on column "**Email**"| `/^(?:\|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/` |
+| the row "**1**" should contain nothing on column "**Email**"| `/^(?:\|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/` |
 
 ### Form fields
 
