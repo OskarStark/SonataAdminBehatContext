@@ -638,15 +638,18 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
     /**
      * @When /^(?:|I )should see "(?P<value>[^"]*)" in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/
+     * @When /^(?:|I )should see "(?P<value>[^"]*)" in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/
      * @When /^(?:|the )row "(?P<row>[^"]*)" should contain "(?P<value>[^"]*)" on column "(?P<column>[^"]*)"$/
+     * @When /^(?:|the )row "(?P<row>[^"]*)" should contain "(?P<value>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/
      *
-     * @param string $value
-     * @param string $row
-     * @param string $column
+     * @param string      $value
+     * @param string      $row
+     * @param string      $column
+     * @param string|null $dataName
      *
      * @throws ElementNotFoundException
      */
-    public function iShouldSeeValueInRowOnColumn($value, $row, $column)
+    public function iShouldSeeValueInRowOnColumn($value, $row, $column, $dataName = null)
     {
         $session = $this->getSession();
 
@@ -665,7 +668,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
             $column = mb_strtolower($column);
         }
 
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, $column, $value);
+        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, is_null($dataName) ? $column : $dataName, $value);
 
         $element = $session->getPage()->find(
             'xpath',
@@ -679,14 +682,17 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
 
     /**
      * @When /^(?:|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/
-     * @When /^(?:|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/
+     * @When /^(?:|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/
+     * @When /^(?:|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/*
+     * @When /^(?:|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/
      *
-     * @param string $row
-     * @param string $column
+     * @param string      $row
+     * @param string      $column
+     * @param string|null $dataName
      *
      * @throws ElementNotFoundException
      */
-    public function iShouldSeeNothingInRowOnColumn($row, $column)
+    public function iShouldSeeNothingInRowOnColumn($row, $column, $dataName = null)
     {
         $value = '';
 
@@ -707,7 +713,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
             $column = mb_strtolower($column);
         }
 
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, $column, $value);
+        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, is_null($dataName) ? $column : $dataName, $value);
 
         $element = $session->getPage()->find(
             'xpath',

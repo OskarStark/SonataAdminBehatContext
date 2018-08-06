@@ -84,9 +84,13 @@ default:
 | I should see "**ID**" list column |`/^(?:\|I )should see "([^"]*)" list column$/`|
 | I should not see "**Password**" list column |`/^(?:\|I )should not see "([^"]*)" list column$/`|
 | I should see "**user@example.com**" in row "**1**" on column "**Email**"| `/^(?:\|I )should see "(?P<value>[^"]*)" in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/` |
+| I should see "**user@example.com**" in row "**1**" on column "**Email**" (use data-row: "mail")| `/^(?:\|I )should see "(?P<value>[^"]*)" in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
 | the row "**1**" should contain "**user@example.com**" on column "**Email**"| `/^(?:\|the )row "(?P<row>[^"]*)" should contain "(?P<value>[^"]*)" on column "(?P<column>[^"]*)"$/` |
+| the row "**1**" should contain "**user@example.com**" on column "**Email**" (use data-row: "mail")| `/^(?:\|the )row "(?P<row>[^"]*)" should contain "(?P<value>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
 | I should see nothing in row "**1**" on column "**Email**"| `/^(?:\|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/` |
+| I should see nothing in row "**1**" on column "**Email**" (use data-row: "mail")| `/^(?:\|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
 | the row "**1**" should contain nothing on column "**Email**"| `/^(?:\|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/` |
+| the row "**1**" should contain nothing on column "**Email**"  (use data-row: "mail")| `/^(?:\|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
 
 ### Form fields
 
