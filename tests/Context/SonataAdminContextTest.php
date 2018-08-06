@@ -602,12 +602,12 @@ EOF;
      *
      * @dataProvider iShouldSeeValueInRowOnColumnProvider
      */
-    public function iShouldSeeValueInRowOnColumn($html, $name)
+    public function iShouldSeeValueInRowOnColumn($html, $name, $dataName = null)
     {
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->assertNull($this->context->iShouldSeeValueInRowOnColumn('tralala', 1, $name));
+        $this->assertNull($this->context->iShouldSeeValueInRowOnColumn('tralala', 1, $name, $dataName));
     }
 
     /**
@@ -651,6 +651,19 @@ EOF
 EOF
                 ,
                 'FOO Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="other-data-name">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'FOO Bar',
+                'other-data-name',
             ],
         ];
     }
@@ -702,12 +715,12 @@ EOF;
      *
      * @dataProvider iShouldSeeNothingInRowOnColumnProvider
      */
-    public function iShouldSeeNothingInRowOnColumn($html, $name)
+    public function iShouldSeeNothingInRowOnColumn($html, $name, $dataName = null)
     {
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->assertNull($this->context->iShouldSeeNothingInRowOnColumn(1, $name));
+        $this->assertNull($this->context->iShouldSeeNothingInRowOnColumn(1, $name, $dataName));
     }
 
     /**
@@ -751,6 +764,19 @@ EOF
 EOF
                 ,
                 'FOO Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="other-data-name"></td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'FOO Bar',
+                'other-data-name',
             ],
         ];
     }
