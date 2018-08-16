@@ -91,9 +91,8 @@ default:
 | I should see nothing in row "**1**" on column "**Email**" (use data-row: "mail")| `/^(?:\|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
 | the row "**1**" should contain nothing on column "**Email**"| `/^(?:\|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/` |
 | the row "**1**" should contain nothing on column "**Email**" (use data-row: "mail")| `/^(?:\|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
-| the value in row "**1**" on column "**Email**" should end with "@gmail.com"| `/^(?:\|the )value in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" should end with "(?P<end>[^"]*)"$/` |
-| the value in row "**1**" on column "**Email**" should end with "@gmail.com" (use data-row: "mail")| `/^(?:\|the )value in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" should end with "(?P<end>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
-
+| the value in row "**1**" on column "**Email**" should end with "**@gmail.com**"| `/^(?:\|the )value in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" should end with "(?P<end>[^"]*)"$/` |
+| the value in row "**1**" on column "**Email**" should end with "**@gmail.com**" (use data-row: "mail")| `/^(?:\|the )value in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" should end with "(?P<end>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/` |
 
 ### Form fields
 
