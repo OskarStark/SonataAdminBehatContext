@@ -681,6 +681,48 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     }
 
     /**
+     * @When /^(?:|the )value in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" should end with "(?P<end>[^"]*)"$/
+     * @When /^(?:|the )value in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" should end with "(?P<end>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/
+     *
+     * @param string      $end
+     * @param string      $row
+     * @param string      $column
+     * @param string|null $dataName
+     *
+     * @throws ElementNotFoundException
+     */
+    public function valueInRowOnColumnShouldEndWith($end, $row, $column, $dataName = null)
+    {
+        $session = $this->getSession();
+
+        if (strstr($column, ' ')) {
+            $parts = explode(' ', $column);
+
+            $column = '';
+            foreach ($parts as $key => $part) {
+                if (0 == $key) {
+                    $column .= mb_strtolower($part);
+                } else {
+                    $column .= ucfirst(mb_strtolower($part));
+                }
+            }
+        } else {
+            $column = mb_strtolower($column);
+        }
+
+        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and substring(normalize-space(), string-length(normalize-space()) - string-length("%s") + 1) = "%s"]', $row, is_null($dataName) ? $column : $dataName, $end, $end);
+
+        $element = $session->getPage()->find(
+            'xpath',
+            $locator
+        );
+
+        if (!$element) {
+            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Value-In-Row should end with', 'xpath', $locator);
+        }
+    }
+
+    /**
      * @When /^(?:|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)"$/
      * @When /^(?:|I )should see nothing in row "(?P<row>[^"]*)" on column "(?P<column>[^"]*)" \(use data-name: "(?P<dataName>[^"]*)"\)$/
      * @When /^(?:|the )row "(?P<row>[^"]*)" should contain nothing on column "(?P<column>[^"]*)"$/

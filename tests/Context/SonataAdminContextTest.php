@@ -822,4 +822,117 @@ EOF;
         $this->context->setMink($mink);
         $this->context->iShouldSeeNothingInRowOnColumn(1, 'bar');
     }
+
+    /**
+     * @test
+     *
+     * @dataProvider valueInRowOnColumnShouldEndWithProvider
+     */
+    public function valueInRowOnColumnShouldEndWith($html, $name, $dataName = null)
+    {
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->assertNull($this->context->valueInRowOnColumnShouldEndWith('ala', 1, $name, $dataName));
+    }
+
+    /**
+     * @return array
+     */
+    public function valueInRowOnColumnShouldEndWithProvider()
+    {
+        return [
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="fooBar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'Foo Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="fooBar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'FOO Bar',
+            ],
+            [
+                <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="other-data-name">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF
+                ,
+                'FOO Bar',
+                'other-data-name',
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @expectedException \Behat\Mink\Exception\ElementNotFoundException
+     * @expectedExceptionMessage  Value-In-Row should end with matching xpath "//table/tbody/tr[1]/td[@data-name="baz" and substring(normalize-space(), string-length(normalize-space()) - string-length("ala") + 1) = "ala"]" not found.
+     */
+    public function valueInRowOnColumnShouldEndWithElementNotFound()
+    {
+        $html = <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF;
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->context->valueInRowOnColumnShouldEndWith('ala', 1, 'baz');
+    }
+
+    /**
+     * @test
+     * @expectedException \Behat\Mink\Exception\ElementNotFoundException
+     * @expectedExceptionMessage  Value-In-Row should end with matching xpath "//table/tbody/tr[1]/td[@data-name="bar" and substring(normalize-space(), string-length(normalize-space()) - string-length("value") + 1) = "value"]" not found.
+     */
+    public function valueInRowOnColumnShouldEndWithElementFoundButInvalidValue()
+    {
+        $html = <<<EOF
+<table>
+<tbody>
+    <tr><td data-name="bar">tralala</td><td data-name="foo"></td></tr>
+    <tr></tr>
+</tbody>
+</table>
+EOF;
+        $mink = self::setupMink($html);
+
+        $this->context->setMink($mink);
+        $this->context->valueInRowOnColumnShouldEndWith('value', 1, 'bar');
+    }
 }
