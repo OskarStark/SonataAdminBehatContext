@@ -7,6 +7,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Driver\BrowserKitDriver;
 use Behat\Mink\Driver\Selenium2Driver;
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
@@ -97,14 +98,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iFilterTheList()
     {
-        $session = $this->getSession();
-
-        $locator = '//button[@class="btn btn-primary"]';
-        $filterButton = $session->getPage()->find('xpath', $locator);
-
-        if (null === $filterButton) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Filter-Button', 'xpath', $locator);
-        }
+        $filterButton = $this->findElement(
+            '//button[@class="btn btn-primary"]',
+            'Filter-Button'
+        );
 
         $filterButton->click();
     }
@@ -116,13 +113,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldSeeTheFilters()
     {
-        $session = $this->getSession();
-        $locator = '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a';
-        $filter = $session->getPage()->find('xpath', $locator);
-
-        if (!$filter) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Filter', 'xpath', $locator);
-        }
+        $this->findElement(
+            '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a',
+            'Filter'
+        );
     }
 
     /**
@@ -132,12 +126,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldNotSeeTheFilters()
     {
-        $session = $this->getSession();
-        $filter = $session->getPage()->find('xpath', '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a');
-
-        if ($filter) {
-            throw new ExpectationException('Filter found!', $this->getSession()->getDriver());
-        }
+        $this->notFindElement(
+            '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a',
+            'Filter found!'
+        );
     }
 
     /**
@@ -149,13 +141,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iClickFilters()
     {
-        $session = $this->getSession();
-        $locator = '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a';
-        $filter = $session->getPage()->find('xpath', $locator);
-
-        if (!$filter) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Filter', 'xpath', $locator);
-        }
+        $filter = $this->iShouldSeeTheFilters();
 
         $filter->click();
     }
@@ -171,20 +157,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iSelectFilter($name)
     {
-        $session = $this->getSession();
-        $locator = sprintf(
+        $element = $this->findElement(sprintf(
             '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a/parent::li/ul/li/a[contains(., "%s")]',
             $name
-        );
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
-        );
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Filter', 'xpath', $locator);
-        }
+        ), 'Filter');
 
         $element->click();
     }
@@ -209,37 +185,16 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     /**
      * @When /^(?:|I )should see "([^"]*)" filter$/
      *
-     * @param string $name
+     * @param string $filter
      *
      * @throws ElementNotFoundException
      */
-    public function iShouldSeeFilter($name)
+    public function iShouldSeeFilter($filter)
     {
-        $session = $this->getSession();
-        if (strstr($name, ' ')) {
-            $parts = explode(' ', $name);
-
-            $name = '';
-            foreach ($parts as $key => $part) {
-                if (0 == $key) {
-                    $name .= mb_strtolower($part);
-                } else {
-                    $name .= ucfirst(mb_strtolower($part));
-                }
-            }
-        } else {
-            $name = mb_strtolower($name);
-        }
-        $locator = sprintf('//div[contains(@class, "form-group")]//*[self::input or self::select][contains(@name, "filter[%s][value]")]', $name);
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
-        );
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Filter', 'xpath', $locator);
-        }
+        $this->findElement(sprintf(
+            '//div[contains(@class, "form-group")]//*[self::input or self::select][contains(@name, "filter[%s][value]")]',
+            $this->fixFilter($filter)
+        ), 'Filter');
     }
 
     /**
@@ -291,23 +246,13 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iCheckCheckboxInRow($row)
     {
-        $session = $this->getSession();
-
-        $locator = sprintf(
-            '//table/tbody/tr[%s]/td[1]/div[@class="icheckbox_square-blue"]',
-            $row
+        $checkbox = $this->findElement(
+            sprintf(
+                '//table/tbody/tr[%s]/td[1]/div[@class="icheckbox_square-blue"]',
+                $row
+            ),
+            sprintf('Checkbox in row %s', $row)
         );
-
-        $checkbox = $session->getPage()->find('xpath', $locator);
-
-        if (!$checkbox) {
-            throw new ElementNotFoundException(
-                $this->getSession()->getDriver(),
-                sprintf('Checkbox in row "%s"', $row),
-                'xpath',
-                $locator
-            );
-        }
 
         $checkbox->click();
     }
@@ -321,14 +266,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iCheckAllElementsCheckbox()
     {
-        $session = $this->getSession();
-
-        $locator = '//label[@class="checkbox"]';
-        $allElementsCheckbox = $session->getPage()->find('xpath', $locator);
-
-        if (null === $allElementsCheckbox) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'All-Elements checkbox', 'xpath', $locator);
-        }
+        $allElementsCheckbox = $this->findElement(
+            '//label[@class="checkbox"]',
+            'All-Elements checkbox'
+        );
 
         $allElementsCheckbox->click();
     }
@@ -345,14 +286,11 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     public function iShouldSeeFlashMessageWith($status, $message)
     {
         $message = $this->fixStepArgument($message);
-        $session = $this->getSession();
 
-        $locator = sprintf('//div[@class="alert alert-%s alert-dismissable"]', $status);
-        $flashMessage = $session->getPage()->find('xpath', $locator);
-
-        if (null === $flashMessage) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Flash-Message', 'xpath', $locator);
-        }
+        $flashMessage = $this->findElement(
+            sprintf('//div[@class="alert alert-%s alert-dismissable"]', $status),
+            'Flash-Message'
+        );
 
         $text = $flashMessage->getText();
         if (!strstr($text, $message)) {
@@ -372,13 +310,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iCloseFlashMessage()
     {
-        $session = $this->getSession();
-        $locator = '//div[contains(@class, "alert-dismissable")]/button';
-        $xButton = $session->getPage()->find('xpath', $locator);
-
-        if (null === $xButton) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Flash-Message close button', 'xpath', $locator);
-        }
+        $xButton = $this->findElement(
+            '//div[contains(@class, "alert-dismissable")]/button',
+            'Flash-Message close button'
+        );
 
         $xButton->click();
     }
@@ -487,20 +422,12 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iImpersonateUser($user)
     {
-        $session = $this->getSession();
-
-        $locator = sprintf(
+        $impersonateButton = $this->findElement(sprintf(
             '//table/tbody/tr[contains(., "%s")]/td[@data-name="impersonating"]//a[@title="Impersonate User"]',
             $user
-        );
+        ), 'Impersonate User');
 
-        $element = $session->getPage()->find('xpath', $locator);
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Impersonate User '.$user, 'xpath', $locator);
-        }
-
-        $element->click();
+        $impersonateButton->click();
     }
 
     /**
@@ -510,15 +437,16 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iSelectFromBatchActions($action)
     {
-        $session = $this->getSession();
-        $element = $session->getPage()->find(
-            'xpath',
-            '//div[@class="box-footer"]//div[@class="select2-container"]'
+        $element = $this->findElement(
+            '//div[@class="box-footer"]//div[@class="select2-container"]',
+            'Batch-Action'
         );
-
         $element->click();
 
-        $action = $session->getPage()->find('xpath', '//ul[@class="select2-results"]//div[text()="'.$action.'"]');
+        $action = $this->findElement(
+            sprintf('//ul[@class="select2-results"]//div[text()="%s"]', $action),
+            'Batch-Action'
+        );
         $action->click();
     }
 
@@ -601,17 +529,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldSeeListColumn($name)
     {
-        $session = $this->getSession();
-        $locator = sprintf('//table/thead//th[contains(., "%s")]', $name);
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
+        $this->findElement(
+            sprintf('//table/thead//th[contains(., "%s")]', $name),
+            'Column'
         );
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Column', 'xpath', $locator);
-        }
     }
 
     /**
@@ -623,17 +544,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldNotSeeListColumn($name)
     {
-        $session = $this->getSession();
-        $locator = sprintf('//table/thead//th[contains(., "%s")]', $name);
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
+        $this->notFindElement(
+            sprintf('//table/thead//th[contains(., "%s")]', $name),
+            'Column'
         );
-
-        if ($element && 'display: none;' == !$element->getAttribute('style')) {
-            throw new ExpectationException('Column was found!', $this->getSession()->getDriver());
-        }
     }
 
     /**
@@ -651,33 +565,12 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldSeeValueInRowOnColumn($value, $row, $column, $dataName = null)
     {
-        $session = $this->getSession();
-
-        if (strstr($column, ' ')) {
-            $parts = explode(' ', $column);
-
-            $column = '';
-            foreach ($parts as $key => $part) {
-                if (0 == $key) {
-                    $column .= mb_strtolower($part);
-                } else {
-                    $column .= ucfirst(mb_strtolower($part));
-                }
-            }
-        } else {
-            $column = mb_strtolower($column);
-        }
-
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, is_null($dataName) ? $column : $dataName, $value);
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
-        );
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Value-In-Row', 'xpath', $locator);
-        }
+        $this->findElement(sprintf(
+            '//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]',
+            $row,
+            is_null($dataName) ? $this->fixColumn($column) : $dataName,
+            $value
+        ), 'Value-In-Row');
     }
 
     /**
@@ -693,33 +586,13 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function valueInRowOnColumnShouldEndWith($end, $row, $column, $dataName = null)
     {
-        $session = $this->getSession();
-
-        if (strstr($column, ' ')) {
-            $parts = explode(' ', $column);
-
-            $column = '';
-            foreach ($parts as $key => $part) {
-                if (0 == $key) {
-                    $column .= mb_strtolower($part);
-                } else {
-                    $column .= ucfirst(mb_strtolower($part));
-                }
-            }
-        } else {
-            $column = mb_strtolower($column);
-        }
-
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and substring(normalize-space(), string-length(normalize-space()) - string-length("%s") + 1) = "%s"]', $row, is_null($dataName) ? $column : $dataName, $end, $end);
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
-        );
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Value-In-Row should end with', 'xpath', $locator);
-        }
+        $this->findElement(sprintf(
+            '//table/tbody/tr[%s]/td[@data-name="%s" and substring(normalize-space(), string-length(normalize-space()) - string-length("%s") + 1) = "%s"]',
+            $row,
+            is_null($dataName) ? $this->fixColumn($column) : $dataName,
+            $end,
+            $end
+        ), 'Value-In-Row should end with');
     }
 
     /**
@@ -738,33 +611,12 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     {
         $value = '';
 
-        $session = $this->getSession();
-
-        if (strstr($column, ' ')) {
-            $parts = explode(' ', $column);
-
-            $column = '';
-            foreach ($parts as $key => $part) {
-                if (0 == $key) {
-                    $column .= mb_strtolower($part);
-                } else {
-                    $column .= ucfirst(mb_strtolower($part));
-                }
-            }
-        } else {
-            $column = mb_strtolower($column);
-        }
-
-        $locator = sprintf('//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]', $row, is_null($dataName) ? $column : $dataName, $value);
-
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
-        );
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Nothing-In-Row', 'xpath', $locator);
-        }
+        $this->findElement(sprintf(
+            '//table/tbody/tr[%s]/td[@data-name="%s" and normalize-space() = "%s"]',
+            $row,
+            is_null($dataName) ? $this->fixColumn($column) : $dataName,
+            $value
+        ), 'Nothing-In-Row');
     }
 
     /**
@@ -850,6 +702,80 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
     private function fixStepArgument($argument)
     {
         return str_replace('\\"', '"', $argument);
+    }
+
+    private function fixColumn(string $column): string
+    {
+        if (strstr($column, ' ')) {
+            $parts = explode(' ', $column);
+
+            $column = '';
+            foreach ($parts as $key => $part) {
+                if (0 == $key) {
+                    $column .= mb_strtolower($part);
+                } else {
+                    $column .= ucfirst(mb_strtolower($part));
+                }
+            }
+        } else {
+            $column = mb_strtolower($column);
+        }
+
+        return $column;
+    }
+
+    private function fixFilter(string $filter): string
+    {
+        if (strstr($filter, ' ')) {
+            $parts = explode(' ', $filter);
+
+            $filter = '';
+            foreach ($parts as $key => $part) {
+                if (0 == $key) {
+                    $filter .= mb_strtolower($part);
+                } else {
+                    $filter .= ucfirst(mb_strtolower($part));
+                }
+            }
+        } else {
+            $filter = mb_strtolower($filter);
+        }
+
+        return $filter;
+    }
+
+    /**
+     * @param string $locator
+     * @param string $type
+     *
+     * @return NodeElement
+     *
+     * @throws ElementNotFoundException
+     */
+    private function findElement(string $locator, string $type): NodeElement
+    {
+        $element = $this->getSession()->getPage()->find('xpath', $locator);
+
+        if (!$element) {
+            throw new ElementNotFoundException($this->getSession()->getDriver(), $type, 'xpath', $locator);
+        }
+
+        return $element;
+    }
+
+    /**
+     * @param string $locator
+     * @param string $type
+     *
+     * @throws ExpectationException
+     */
+    private function notFindElement(string $locator, string $type): void
+    {
+        $element = $this->getSession()->getPage()->find('xpath', $locator);
+
+        if ($element) {
+            throw new ExpectationException(sprintf('%s found, but should not!', $type), $this->getSession()->getDriver());
+        }
     }
 
     public static function getAcceptedSnippetType()

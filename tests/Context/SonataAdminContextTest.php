@@ -247,7 +247,7 @@ EOF;
 
     /**
      * @test
-     * @expectedExceptionMessage Column was found!
+     * @expectedExceptionMessage Column found, but should not!
      * @expectedException \Behat\Mink\Exception\ExpectationException
      */
     public function iShouldNotSeeListColumnElementFound()
