@@ -525,14 +525,25 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      *
      * @param string $name
      *
+     * @throws ExpectationException
      * @throws ElementNotFoundException
      */
     public function iShouldSeeListColumn($name)
     {
-        $this->findElement(
-            sprintf('//table/thead//th[contains(., "%s")]', $name),
-            'Column'
+        $session = $this->getSession();
+        $locator = sprintf('//table/thead//th[contains(., "%s")]', $name);
+        $element = $session->getPage()->find(
+            'xpath',
+            $locator
         );
+
+        if ($element && 'display: none;' == $element->getAttribute('style')) {
+            throw new ExpectationException('Column was found!', $this->getSession()->getDriver());
+        }
+
+        if (!$element) {
+            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Column', 'xpath', $locator);
+        }
     }
 
     /**
