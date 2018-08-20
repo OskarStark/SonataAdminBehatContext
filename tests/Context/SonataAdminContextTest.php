@@ -2,6 +2,7 @@
 
 namespace Tests\OStark\Context;
 
+use Behat\Mink\Element\NodeElement;
 use OStark\Context\SonataAdminContext;
 use OStark\Test\BaseTestCase;
 use Sonata\UserBundle\Model\UserManagerInterface;
@@ -298,7 +299,7 @@ EOF;
         $mink = self::setupMink($html);
 
         $this->context->setMink($mink);
-        $this->assertNull($this->context->iShouldSeeTheFilters());
+        $this->assertInstanceOf(NodeElement::class, $this->context->iShouldSeeTheFilters());
     }
 
     /**

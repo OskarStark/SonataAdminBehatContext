@@ -111,9 +111,9 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      *
      * @throws ElementNotFoundException
      */
-    public function iShouldSeeTheFilters()
+    public function iShouldSeeTheFilters(): NodeElement
     {
-        $this->findElement(
+        return $this->findElement(
             '//ul[contains(@class, "nav")]/li[contains(@class, "sonata-actions")]/a/i[contains(@class, "fa-filter")]/parent::a',
             'Filter'
         );
@@ -530,20 +530,10 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldSeeListColumn($name)
     {
-        $session = $this->getSession();
-        $locator = sprintf('//table/thead//th[contains(., "%s")]', $name);
-        $element = $session->getPage()->find(
-            'xpath',
-            $locator
+        $this->findElement(
+            sprintf('//table/thead//th[contains(., "%s")]', $name),
+            'List-Column'
         );
-
-        if ($element && 'display: none;' == $element->getAttribute('style')) {
-            throw new ExpectationException('Column was found!', $this->getSession()->getDriver());
-        }
-
-        if (!$element) {
-            throw new ElementNotFoundException($this->getSession()->getDriver(), 'Column', 'xpath', $locator);
-        }
     }
 
     /**
@@ -555,10 +545,16 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
      */
     public function iShouldNotSeeListColumn($name)
     {
-        $this->notFindElement(
-            sprintf('//table/thead//th[contains(., "%s")]', $name),
-            'Column'
+        $session = $this->getSession();
+        $locator = sprintf('//table/thead//th[contains(., "%s")]', $name);
+        $element = $session->getPage()->find(
+            'xpath',
+            $locator
         );
+
+        if ($element && 'display: none;' == !$element->getAttribute('style')) {
+            throw new ExpectationException('Column found, but should not!', $this->getSession()->getDriver());
+        }
     }
 
     /**
