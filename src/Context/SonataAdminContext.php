@@ -553,7 +553,7 @@ final class SonataAdminContext extends RawMinkContext implements CustomSnippetAc
         );
 
         if ($element && 'display: none;' == !$element->getAttribute('style')) {
-            throw new ExpectationException('Column was found!', $this->getSession()->getDriver());
+            throw new ExpectationException('Column found, but should not!', $this->getSession()->getDriver());
         }
     }
 
