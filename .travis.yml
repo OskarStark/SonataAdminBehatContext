@@ -21,8 +21,9 @@ matrix:
       php: 7.2
 
 install:
-  - which composer
-  - php -d memory_limit=-1 $(which composer) install
+  - composer selfupdate
+  - composer install
+  #- php -d memory_limit=-1 /home/travis/.phpenv/shims/composer install
 
 script:
   - vendor/bin/phpunit
