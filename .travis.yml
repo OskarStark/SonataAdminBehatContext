@@ -20,11 +20,8 @@ matrix:
     - stage: test
       php: 7.2
 
-#before_install:
-#  - phpenv config-add .ci/travis.php.ini
-
 install:
-  - composer install
+  - php -d memory_limit=-1 composer install
 
 script:
   - vendor/bin/phpunit
