@@ -8,6 +8,7 @@ cache:
 env:
   global:
     - SYMFONY_DEPRECATIONS_HELPER=weak_vendors
+    - COMPOSER_MEMORY_LIMIT=-1
 
 stages:
   - test
@@ -21,7 +22,7 @@ matrix:
       php: 7.2
 
 install:
-  - COMPOSER_MEMORY_LIMIT=-1 composer install
+  - composer install
 
 script:
   - vendor/bin/phpunit
