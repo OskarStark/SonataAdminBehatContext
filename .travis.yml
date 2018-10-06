@@ -22,7 +22,7 @@ matrix:
 
 install:
   - which composer
-  - php -d memory_limit=-1 /usr/bin/composer install
+  - php -d memory_limit=-1 $(which composer) install
 
 script:
   - vendor/bin/phpunit
