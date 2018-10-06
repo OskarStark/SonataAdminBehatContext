@@ -10,16 +10,16 @@ env:
     - SYMFONY_DEPRECATIONS_HELPER=weak_vendors
     - COMPOSER_MEMORY_LIMIT=-1
 
-stages:
-  - test
+php:
+  - 7.1
+  - 7.2
+  - nightly
 
 matrix:
   fast_finish: true
-  include:
-    - stage: test
-      php: 7.1
-    - stage: test
-      php: 7.2
+  allow_failures:
+    - php:
+      - nightly
 
 install:
   - composer install
