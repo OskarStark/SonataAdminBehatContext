@@ -21,7 +21,8 @@ matrix:
       php: 7.2
 
 install:
-  - php -d memory_limit=-1 composer install
+  - which composer
+  - php -d memory_limit=-1 /usr/bin/composer install
 
 script:
   - vendor/bin/phpunit
