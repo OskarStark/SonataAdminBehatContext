@@ -20,6 +20,8 @@ matrix:
       php: 7.1
     - stage: test
       php: 7.2
+    - stage: test
+      php: 7.3
 
 install:
   - composer install
