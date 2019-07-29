@@ -11,10 +11,10 @@
 
 namespace OStark\Test;
 
-use Symfony\Component\BrowserKit\Client;
+use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\BrowserKit\Response;
 
-class TestClient extends Client
+class TestClient extends AbstractBrowser
 {
     protected $nextResponse = null;
     protected $nextScript = null;
