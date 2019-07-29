@@ -11,7 +11,6 @@
 
 namespace OStark\Context;
 
-use Behat\Behat\Context\CustomSnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Driver\BrowserKitDriver;
@@ -34,7 +33,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Defines features for the SonataAdmin context.
  */
-final class SonataAdminContext extends RawMinkContext implements CustomSnippetAcceptingContext, KernelAwareContext
+final class SonataAdminContext extends RawMinkContext implements KernelAwareContext
 {
     const DEFAULT_USERNAME = 'test@example.com';
 
