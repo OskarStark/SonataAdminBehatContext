@@ -21,8 +21,7 @@
         "php": "^7.1",
         "behat/behat": "^3.0",
         "behat/mink-extension": "^2.3",
-        "behat/symfony2-extension": "^2.1",
-        "sonata-project/user-bundle": "^4.0"
+        "behat/symfony2-extension": "^2.1"
     },
     "require-dev": {
         "behat/mink-goutte-driver": "^1.1",
@@ -40,5 +39,8 @@
         "psr-4": {
             "Tests\\OStark\\": "tests/"
         }
+    },
+    "suggest": {
+        "sonata-project/user-bundle": "Allows User & Authentication scenarios"
     }
 }
