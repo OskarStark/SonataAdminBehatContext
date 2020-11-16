@@ -1,0 +1,84 @@
+on:
+    push:
+        branches:
+            - 'master'
+    pull_request:
+
+name: CI
+
+env:
+    SYMFONY_DEPRECATIONS_HELPER: weak_vendors
+
+jobs:
+    php-cs-fixer:
+        name: PHP-CS-Fixer
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: PHP-CS-Fixer
+              uses: docker://oskarstark/php-cs-fixer-ga:2.16.7
+              with:
+                  args: --diff --dry-run
+
+    composer-normalize:
+        name: composer-normalize
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: composer-normalize
+              uses: docker://ergebnis/composer-normalize-action:0.8.0
+
+    test:
+        name: "PHP ${{ matrix.php-version }} + ${{ matrix.dependency }}"
+
+        runs-on: ubuntu-latest
+
+        continue-on-error: ${{ matrix.allowed_to_fail }}
+
+        strategy:
+            matrix:
+                php-version:
+                    - '7.1'
+                    - '7.2'
+                    - '7.3'
+                    - '7.4'
+                dependency:
+                    - 'lowest'
+                    - 'highest'
+                allowed_to_fail: [false]
+                include:
+                    - php-version: '8.0'
+                      dependency: 'lowest'
+                      allowed_to_fail: true
+                    - php-version: '8.0'
+                      dependency: 'highest'
+                      allowed_to_fail: true
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install PHP with extensions
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  tools: composer:v2
+
+            - name: Add PHPUnit matcher
+              run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+            - name: "Composer install"
+              uses: "ramsey/composer-install@v1"
+              with:
+                  dependency-versions: "${{ matrix.dependency }}"
+
+            - name: "Run tests"
+              run: vendor/bin/phpunit
