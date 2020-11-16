@@ -302,10 +302,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
 
         $text = $flashMessage->getText();
         if (!strstr($text, $message)) {
-            throw new ExpectationException(
-                sprintf('Could not find message "%s" in Flash-Message!', $message),
-                $this->getSession()->getDriver()
-            );
+            throw new ExpectationException(sprintf('Could not find message "%s" in Flash-Message!', $message), $this->getSession()->getDriver());
         }
     }
 
@@ -398,10 +395,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
 
         $user = $this->userManager->findOneBy(['username' => $username]);
         if (null === $user) {
-            throw new ExpectationException(
-                sprintf('User with username "%s" does not exist', $username),
-                $driver
-            );
+            throw new ExpectationException(sprintf('User with username "%s" does not exist', $username), $driver);
         }
 
         $this->user = $user;
@@ -655,8 +649,6 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     }
 
     /**
-     * @param UserInterface $user
-     *
      * @throws UnsupportedDriverActionException
      *
      * @codeCoverageIgnore Selenium2Driver needed
@@ -698,10 +690,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
 
         $user = $this->userManager->findOneBy(['username' => self::DEFAULT_USERNAME]);
         if (null === $user) {
-            throw new ExpectationException(
-                sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME),
-                $this->getSession()->getDriver()
-            );
+            throw new ExpectationException(sprintf('User with username "%s" does not exist', self::DEFAULT_USERNAME), $this->getSession()->getDriver());
         }
 
         return $user;
@@ -760,11 +749,6 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     }
 
     /**
-     * @param string $locator
-     * @param string $type
-     *
-     * @return NodeElement
-     *
      * @throws ElementNotFoundException
      */
     private function findElement(string $locator, string $type): NodeElement
@@ -779,9 +763,6 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     }
 
     /**
-     * @param string $locator
-     * @param string $type
-     *
      * @throws ExpectationException
      */
     private function notFindElement(string $locator, string $type): void
