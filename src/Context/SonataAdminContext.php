@@ -23,6 +23,7 @@ use Behat\MinkExtension\Context\MinkContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Exception;
+use OStark\Exception\PackageNotFoundException;
 use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -807,7 +808,9 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     private function assertUserBundleDependencies()
     {
         if ($this->userManager === null || $this->tokenStorage === null) {
-            throw new Exception('To use User & Authentication scenarios install \'sonata-project/user-bundle\' package');
+            throw new PackageNotFoundException(
+                sprintf('To use User & Authentication scenarios install %s package', 'sonata-project/user-bundle')
+            );
         }
     }
 }
