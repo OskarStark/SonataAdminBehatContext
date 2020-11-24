@@ -22,7 +22,6 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
-use Exception;
 use OStark\Exception\PackageNotFoundException;
 use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\BrowserKit\Cookie;
@@ -45,17 +44,17 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     private $user;
 
     /**
-     * @var null|UserManagerInterface
+     * @var UserManagerInterface|null
      */
     protected $userManager;
 
     /**
-     * @var null|TokenStorageInterface
+     * @var TokenStorageInterface|null
      */
     protected $tokenStorage;
 
     /**
-     * @var null|Session
+     * @var Session|null
      */
     protected $session;
 
@@ -807,10 +806,8 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
 
     private function assertUserBundleDependencies()
     {
-        if ($this->userManager === null || $this->tokenStorage === null) {
-            throw new PackageNotFoundException(
-                sprintf('To use User & Authentication scenarios install %s package', 'sonata-project/user-bundle')
-            );
+        if (null === $this->userManager || null === $this->tokenStorage) {
+            throw new PackageNotFoundException(sprintf('To use User & Authentication scenarios install %s package', 'sonata-project/user-bundle'));
         }
     }
 }
