@@ -22,6 +22,7 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
+use OStark\Exception\PackageNotFoundException;
 use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -43,17 +44,17 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     private $user;
 
     /**
-     * @var UserManagerInterface
+     * @var UserManagerInterface|null
      */
     protected $userManager;
 
     /**
-     * @var TokenStorageInterface
+     * @var TokenStorageInterface|null
      */
     protected $tokenStorage;
 
     /**
-     * @var Session
+     * @var Session|null
      */
     protected $session;
 
@@ -67,7 +68,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
      */
     private $minkContext;
 
-    public function __construct(UserManagerInterface $userManager, TokenStorageInterface $tokenStorage, Session $session)
+    public function __construct(?UserManagerInterface $userManager = null, ?TokenStorageInterface $tokenStorage = null, ?Session $session = null)
     {
         $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
@@ -330,6 +331,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
      */
     public function deleteLastCreatedUser()
     {
+        $this->assertUserBundleDependencies();
         $user = $this->userManager->findBy([], ['createdAt' => 'DESC'], 1);
         $this->userManager->deleteUser(current($user));
     }
@@ -344,6 +346,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
      */
     public function iAmAnAuthenticatedUser()
     {
+        $this->assertUserBundleDependencies();
         $user = $this->userManager->createUser();
 
         $user->setEmail(self::DEFAULT_USERNAME);
@@ -369,6 +372,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
      */
     public function iHaveRole($role)
     {
+        $this->assertUserBundleDependencies();
         $user = $this->getCurrentUser();
 
         $user->setRoles([$role]);
@@ -391,6 +395,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
      */
     public function iAmAuthenticatedAsUser($username)
     {
+        $this->assertUserBundleDependencies();
         $driver = $this->getSession()->getDriver();
 
         $user = $this->userManager->findOneBy(['username' => $username]);
@@ -655,6 +660,7 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
      */
     private function createUserSession(UserInterface $user)
     {
+        $this->assertUserBundleDependencies();
         $providerKey = $this->kernel->getContainer()->getParameter('fos_user.firewall_name');
 
         $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
@@ -777,5 +783,12 @@ final class SonataAdminContext extends RawMinkContext implements KernelAwareCont
     public static function getAcceptedSnippetType()
     {
         return 'regex';
+    }
+
+    private function assertUserBundleDependencies()
+    {
+        if (null === $this->userManager || null === $this->tokenStorage) {
+            throw new PackageNotFoundException(sprintf('To use User & Authentication scenarios install %s package', 'sonata-project/user-bundle'));
+        }
     }
 }
