@@ -17,6 +17,8 @@ default:
         default:
             contexts:
                 - OStark\Context\SonataAdminContext:
+                # this can be disabled if you do not use the SonataAdminUserBundle
+                - OStark\Context\SonataAdminUserBundleContext:  
                     userManager: '@sonata.user.user_manager'
                     tokenStorage: '@security.token_storage'
                     session: '@session'
