@@ -16,12 +16,11 @@ use Behat\Mink\Driver\Selenium2Driver;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Sonata\UserBundle\Entity\UserManager;
 use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,7 +28,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Defines features for the SonataAdmin context that make use of the Sonata UserBundle.
  */
-final class SonataAdminUserBundleContext extends RawMinkContext implements KernelAwareContext
+final class SonataAdminUserBundleContext extends RawMinkContext
 {
     const DEFAULT_USERNAME = 'test@example.com';
 
@@ -54,20 +53,20 @@ final class SonataAdminUserBundleContext extends RawMinkContext implements Kerne
     protected $session;
 
     /**
-     * @var KernelInterface
+     * @var ContainerInterface
      */
-    protected $kernel;
+    protected $container;
 
-    public function __construct(UserManager $userManager, TokenStorageInterface $tokenStorage, Session $session)
-    {
+    public function __construct(
+        UserManager $userManager,
+        TokenStorageInterface $tokenStorage,
+        Session $session,
+        ContainerInterface $container
+    ) {
         $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
         $this->session = $session;
-    }
-
-    public function setKernel(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
+        $this->container = $container;
     }
 
     /**
@@ -157,7 +156,7 @@ final class SonataAdminUserBundleContext extends RawMinkContext implements Kerne
      */
     private function createUserSession(UserInterface $user)
     {
-        $providerKey = $this->kernel->getContainer()->getParameter('fos_user.firewall_name');
+        $providerKey = $this->container->getParameter('fos_user.firewall_name');
 
         $token = new UsernamePasswordToken($user, null, $providerKey, $user->getRoles());
         $this->tokenStorage->setToken($token);

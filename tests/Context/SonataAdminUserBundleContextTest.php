@@ -21,7 +21,6 @@ use Sonata\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -58,13 +57,15 @@ class SonataAdminUserBundleContextTest extends BaseTestCase
         $this->session = new Session(new MockArraySessionStorage());
         $this->tokenStorage = new TokenStorage();
 
+        $container = new Container();
+        $container->setParameter('fos_user.firewall_name', 'foo');
+
         $this->context = new SonataAdminUserBundleContext(
             $this->userManager = $this->createMock(\Sonata\UserBundle\Entity\UserManager::class),
             $this->tokenStorage,
-            $this->session
+            $this->session,
+            $container
         );
-
-        $this->context->setKernel($this->getKernelMock());
 
         $this->mink = self::setupMink('<p/>');
         $this->context->setMink($this->mink);
@@ -176,18 +177,5 @@ class SonataAdminUserBundleContextTest extends BaseTestCase
         self::assertSame($this->session->getId(), $this->mink->getSession()->getCookie($this->session->getName()));
         self::assertInstanceOf(UsernamePasswordToken::class, $this->tokenStorage->getToken());
         self::assertSame($user, $this->tokenStorage->getToken()->getUser());
-    }
-
-    private function getKernelMock()
-    {
-        $container = new Container();
-        $container->setParameter('fos_user.firewall_name', 'foo');
-
-        $kernel = $this->createMock(KernelInterface::class);
-        $kernel->expects(self::any())
-            ->method('getContainer')
-            ->willReturn($container);
-
-        return $kernel;
     }
 }

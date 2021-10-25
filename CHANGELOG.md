@@ -29,8 +29,10 @@ default:
         default:
             contexts:
                 - OStark\Context\SonataAdminContext:
-                - OStark\Context\SonataAdminUserBundleContext:  
+                # needed only if you are using sonata-project/user-bundle
+                - OStark\Context\SonataAdminUserBundleContext:    
                     userManager: '@sonata.user.user_manager'
                     tokenStorage: '@security.token_storage'
                     session: '@session'
+                    container: '@service_container'
 ```
