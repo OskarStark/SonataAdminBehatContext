@@ -11,12 +11,8 @@
 
 namespace Tests\OStark\Context;
 
-use Behat\Mink\Element\NodeElement;
-use Behat\Mink\Exception\ExpectationException;
-use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Mink;
 use FOS\UserBundle\Model\UserInterface;
-use OStark\Context\SonataAdminContext;
 use OStark\Context\SonataAdminUserBundleContext;
 use OStark\Test\BaseTestCase;
 use PHPUnit\Framework\MockObject\MockObject;

@@ -167,7 +167,7 @@ final class SonataAdminUserBundleContext extends RawMinkContext implements Kerne
             throw new \RuntimeException('Not authenticated!');
         }
 
-        $this->session->set('_security_' . $providerKey, serialize($token));
+        $this->session->set('_security_'.$providerKey, serialize($token));
         $this->session->save();
 
         $driver = $this->getSession()->getDriver();
