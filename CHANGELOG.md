@@ -12,6 +12,7 @@
 
 Before:
 ```yaml
+# behat.yml.dist
 default:
     suites:
         default:
@@ -24,15 +25,22 @@ default:
 
 After:
 ```yaml
+# behat.yml.dist
 default:
     suites:
         default:
             contexts:
                 - OStark\Context\SonataAdminContext:
                 # needed only if you are using sonata-project/user-bundle
-                - OStark\Context\SonataAdminUserBundleContext:    
-                    userManager: '@sonata.user.user_manager'
-                    tokenStorage: '@security.token_storage'
-                    session: '@session'
-                    container: '@service_container'
+                - OStark\Context\SonataAdminUserBundleContext:
+
+# config/services_test.yaml
+services:
+    OStark\Context\SonataAdminUserBundleContext:
+      arguments:
+        - '@sonata.user.user_manager'
+        - '@security.token_storage'
+        - '@session'
+        - '@service_container'
+
 ```
