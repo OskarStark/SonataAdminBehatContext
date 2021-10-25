@@ -22,7 +22,7 @@ class SonataAdminContextTest extends BaseTestCase
      */
     private $context;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->context = new SonataAdminContext();
     }

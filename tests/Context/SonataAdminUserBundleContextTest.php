@@ -52,7 +52,7 @@ class SonataAdminUserBundleContextTest extends BaseTestCase
      */
     private $mink;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->session = new Session(new MockArraySessionStorage());
         $this->tokenStorage = new TokenStorage();
