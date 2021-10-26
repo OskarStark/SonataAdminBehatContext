@@ -14,9 +14,6 @@ namespace Tests\OStark\Context;
 use Behat\Mink\Element\NodeElement;
 use OStark\Context\SonataAdminContext;
 use OStark\Test\BaseTestCase;
-use Sonata\UserBundle\Model\UserManagerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SonataAdminContextTest extends BaseTestCase
 {
@@ -25,13 +22,9 @@ class SonataAdminContextTest extends BaseTestCase
      */
     private $context;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->context = new SonataAdminContext(
-            $this->createMock(UserManagerInterface::class),
-            $this->createMock(TokenStorageInterface::class),
-            $this->createMock(Session::class)
-        );
+        $this->context = new SonataAdminContext();
     }
 
     /**
